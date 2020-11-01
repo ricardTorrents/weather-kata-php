@@ -13,7 +13,6 @@ class ForecastWeather
 
     public function getWeather(string &$city, \DateTime $datetime):array
     {
-        
         $city=$this->$weather_repository->getCityId($city);
         $results=$this->$weather_repository->getWeather($city);
         foreach ($results as $result) {
