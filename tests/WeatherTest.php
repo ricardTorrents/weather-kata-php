@@ -2,7 +2,9 @@
 
 namespace Tests\Codium\CleanCode;
 
-use Codium\CleanCode\Forecast;
+use Codium\CleanCode\ForecastWeatherController;
+use Codium\CleanCode\HttpForecastWeatherRepository;
+use Codium\CleanCode\ForecastWeather;
 use PHPUnit\Framework\TestCase;
 
 class WeatherTest extends TestCase
@@ -11,10 +13,14 @@ class WeatherTest extends TestCase
     /** @test */
     public function find_the_weather_of_today()
     {
-        $forecast = new Forecast();
+        $forecastWeatherRepository = new HttpForecastWeatherRepository();
+      
+        $forecastWeather =  new ForecastWeather($forecastWeatherRepository);
+       
+        $forecast = new ForecastWeatherController($forecastWeather);
         $city = "Madrid";
 
-        $prediction = $forecast->predict($city);
+        $prediction = $forecast->predictWeather($city);
 
         echo "Today: $prediction\n";
         $this->assertTrue(true, 'I don\'t know how to test it');
@@ -23,11 +29,13 @@ class WeatherTest extends TestCase
     /** @test */
     public function find_the_weather_of_any_day()
     {
-        $forecast = new Forecast();
+        $forecastWeatherRepository = new HttpForecastWeatherRepository();
+        $forecastWeather =  new ForecastWeather($forecastWeatherRepository);
+        $forecast = new ForecastWeatherController($forecastWeather);
         $city = "Madrid";
 
-        $prediction = $forecast->predict($city, new \DateTime('+2 days'));
-
+        $prediction = $forecast->predictWeather($city, new \DateTime('+2 days'));
+       
         echo "Day after tomorrow: $prediction\n";
         $this->assertTrue(true, 'I don\'t know how to test it');
     }
@@ -35,11 +43,12 @@ class WeatherTest extends TestCase
     /** @test */
     public function find_the_wind_of_any_day()
     {
-        $forecast = new Forecast();
+        $forecastWeatherRepository = new HttpForecastWeatherRepository();
+        $forecastWeather =  new ForecastWeather($forecastWeatherRepository);
+        $forecast = new ForecastWeatherController($forecastWeather);
         $city = "Madrid";
 
-        $prediction = $forecast->predict($city, null, true);
-
+        $prediction = $forecast->predictWind($city, null);
         echo "Wind: $prediction\n";
         $this->assertTrue(true, 'I don\'t know how to test it');
     }
@@ -47,21 +56,23 @@ class WeatherTest extends TestCase
     /** @test */
     public function change_the_city_to_woeid()
     {
-        $forecast = new Forecast();
+        $forecastWeatherRepository = new HttpForecastWeatherRepository();
+        $forecastWeather =  new ForecastWeather($forecastWeatherRepository);
+        $forecast = new ForecastWeatherController($forecastWeather);
         $city = "Madrid";
-
-        $forecast->predict($city, null, true);
-
+        $forecast->predictWind($city, null);
         $this->assertEquals("766273", $city);
     }
 
     /** @test */
     public function there_is_no_prediction_for_more_than_5_days()
     {
-        $forecast = new Forecast();
+        $forecastWeatherRepository = new HttpForecastWeatherRepository();
+        $forecastWeather =  new ForecastWeather($forecastWeatherRepository);
+        $forecast = new ForecastWeatherController($forecastWeather);
         $city = "Madrid";
 
-        $prediction = $forecast->predict($city, new \DateTime('+6 days'));
+        $prediction = $forecast->predictWeather($city, new \DateTime('+6 days'));
 
         $this->assertEquals("", $prediction);
     }
